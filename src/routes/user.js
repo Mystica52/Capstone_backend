@@ -13,12 +13,13 @@ import {
   profileUpdateValidationRules,
   passwordChangeValidationRules,
 } from "../middlewares/validator.js";
+import { isAdmin } from "../middlewares/routeProtection.js";
 
 const router = express.Router();
 
 router.post("/signup", validate(signupValidationRules), signup);
 router.post("/login", validate(loginValidationRules), login);
-router.get("/users", allUsers);
+router.get("/users", isAdmin, allUsers);
 router.put(
   "/edit-profile/:userId",
   validate(profileUpdateValidationRules),

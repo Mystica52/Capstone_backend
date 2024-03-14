@@ -1,9 +1,12 @@
 import bcrpyt from "bcrypt";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import multer from "multer";
 import User from "../models/user.js";
+import { upload } from "../utils/upload.js";
 
 dotenv.config();
+const handleImageUpload = upload.single("profileImage");
 
 export const signup = async (req, res) => {
   const { name, email, password, role } = req.body;
@@ -51,6 +54,7 @@ export const login = async (req, res) => {
     const token = jwt.sign(
       {
         userId: user._id,
+        userName: user.name,
         role: user.role,
       },
       process.env.TOKEN_SECRET,
@@ -81,28 +85,68 @@ export const allUsers = async (req, res) => {
   }
 };
 export const editProfile = async (req, res) => {
-  const { name, email, contactNumber, city } = req.body;
   try {
-    const { userId } = req.params;
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        error: "User not exist",
-      });
-    }
-    user.name = name || user.name;
-    user.email = email || user.email;
-    user.contactNumber = contactNumber || user.contactNumber;
-    user.city = city || user.city;
-    await user.save();
-    return res.status(200).json({
-      success: true,
-      message: "Profile updated successfully",
-      user,
+    // Handle image upload
+    handleImageUpload(req, res, async function (err) {
+      try {
+        if (err instanceof multer.MulterError) {
+          // Multer error occurred
+          console.error("Multer error:", err);
+          return res.status(500).json({
+            success: false,
+            error: "Error uploading image",
+          });
+        } else if (err) {
+          // Other errors occurred
+          console.error("Error uploading image:", err);
+          return res.status(500).json({
+            success: false,
+            error: "Error uploading image",
+          });
+        }
+
+        const { name, email, contactNumber, city } = req.body;
+        const { userId } = req.params;
+
+        const user = await User.findById(userId);
+        if (!user) {
+          return res.status(404).json({
+            success: false,
+            error: "User not found",
+          });
+        }
+
+        // Update user profile fields
+        user.name = name || user.name;
+        user.email = email || user.email;
+        user.contactNumber = contactNumber || user.contactNumber;
+        user.city = city || user.city;
+
+        // Check if an image file was uploaded
+        if (req.file) {
+          user.profileImage = req.file.path;
+        } else {
+          // If no image uploaded, set a default profile image
+          user.profileImage = "default_profile.jpg"; // Adjust this to your default profile image path
+        }
+
+        await user.save();
+
+        return res.status(200).json({
+          success: true,
+          message: "Profile updated successfully",
+          user,
+        });
+      } catch (error) {
+        console.error("Error updating profile:", error);
+        return res.status(500).json({
+          success: false,
+          error: "Internal server error",
+        });
+      }
     });
   } catch (error) {
-    console.log("Error While updating profile", error.message);
+    console.error("Error handling image upload:", error);
     return res.status(500).json({
       success: false,
       error: "Internal server error",
