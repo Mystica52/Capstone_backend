@@ -12,7 +12,23 @@ export const Addbus = async (req, res) => {
     price,
   } = req.body;
   try {
-    const newBus = await Bus({
+    // Check if there's already a bus with the same origin, destination, departure time, and arrival time
+    const existingBus = await Bus.findOne({
+      origin: origin,
+      destination: destination,
+      date: date,
+      departure_time: departure_time,
+    });
+
+    if (existingBus) {
+      return res.status(400).json({
+        success: false,
+        error:
+          "Another bus already exists with the same origin, destination, departure time, and arrival time.",
+      });
+    }
+
+    const newBus = await Bus.create({
       plateNo,
       origin,
       destination,
@@ -22,10 +38,12 @@ export const Addbus = async (req, res) => {
       available_seats,
       price,
     });
-    await newBus.save();
-    return res
-      .status(201)
-      .json({ message: "Bus created successfully", bus: newBus });
+
+    return res.status(201).json({
+      success: true,
+      message: "Bus created successfully",
+      bus: newBus,
+    });
   } catch (error) {
     console.log("Error While adding bus", error);
     return res.status(500).json({
@@ -133,6 +151,58 @@ export const deleteBus = async (req, res) => {
     return res.status(500).json({
       success: false,
       error: "Internal server error",
+    });
+  }
+};
+
+export const getAllRoutes = async (req, res) => {
+  try {
+    const allRoutes = await Bus.aggregate([
+      {
+        $group: {
+          _id: { origin: "$origin", destination: "$destination" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          origin: "$_id.origin",
+          destination: "$_id.destination",
+        },
+      },
+    ]);
+
+    return res.status(200).json({ success: true, routes: allRoutes });
+  } catch (error) {
+    console.log("Error while getting all routes", error);
+    return res.status(500).json({
+      success: false,
+      error: "Internal server error",
+    });
+  }
+};
+
+export const getBusesByRoute = async (req, res) => {
+  const { origin, destination } = req.query;
+  try {
+    const busesOnRoute = await Bus.find({
+      origin: origin,
+      destination: destination,
+    });
+    if (!busesOnRoute || busesOnRoute.length === 0) {
+      return res.status(404).json({
+        error: "No bus(es) found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      buses: busesOnRoute,
+    });
+  } catch (error) {
+    console.log("Error while getting buses by route", error);
+    return res.status(500).json({
+      success: false,
+      error: "internal server error",
     });
   }
 };
