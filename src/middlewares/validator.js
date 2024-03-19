@@ -25,6 +25,17 @@ export const loginValidationRules = Joi.object({
   }),
 });
 
+export const profileUpdateValidationRules = Joi.object({
+  name: Joi.string(),
+  email: Joi.string().email(),
+  contactNumber: Joi.string().allow(""),
+  city: Joi.string().allow(""),
+});
+
+export const passwordChangeValidationRules = Joi.object({
+  currentPassword: Joi.string().required(),
+  newPassword: Joi.string().min(6).required(),
+});
 export const validate = (schema) => {
   return (req, res, next) => {
     const { error } = schema.validate(req.body);

@@ -25,6 +25,9 @@ const userSchema = new mongoose.Schema({
     enum: ["admin", "passenger", "agent"],
     default: "passenger",
   },
+  profileImage: {
+    type: String,
+  },
 });
 
 const User = mongoose.model("User", userSchema);

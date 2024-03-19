@@ -6,6 +6,7 @@ import cors from "cors";
 
 const app = express();
 app.use(bodyParser.json());
+
 app.use(cors());
 app.use("/api", userRoutes);
 app.use("/api", busRoutes);
