@@ -7,12 +7,11 @@ export const Addbus = async (req, res) => {
     destination,
     date,
     departure_time,
-    arrival_time,
     available_seats,
     price,
   } = req.body;
   try {
-    // Check if there's already a bus with the same origin, destination, departure time, and arrival time
+    // Check if there's already a bus with the same origin, destination, and departure time
     const existingBus = await Bus.findOne({
       origin: origin,
       destination: destination,
@@ -24,7 +23,7 @@ export const Addbus = async (req, res) => {
       return res.status(400).json({
         success: false,
         error:
-          "Another bus already exists with the same origin, destination, departure time, and arrival time.",
+          "Another bus already exists with the same origin, destination, and departure time.",
       });
     }
 
@@ -34,7 +33,6 @@ export const Addbus = async (req, res) => {
       destination,
       date,
       departure_time,
-      arrival_time,
       available_seats,
       price,
     });
@@ -98,7 +96,6 @@ export const updateBus = async (req, res) => {
       destination,
       date,
       departure_time,
-      arrival_time,
       available_seats,
       price,
     } = req.body;
@@ -114,7 +111,6 @@ export const updateBus = async (req, res) => {
     bus.destination = destination || bus.destination;
     bus.date = date || bus.date;
     bus.departure_time = departure_time || bus.departure_time;
-    bus.arrival_time = arrival_time || bus.arrival_time;
     bus.available_seats = available_seats || bus.available_seats;
     bus.price = price || bus.price;
     const updatedBus = await bus.save();

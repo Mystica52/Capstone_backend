@@ -9,7 +9,6 @@ const busSchema = new mongoose.Schema({
   destination: { type: String, required: true },
   date: { type: Date, required: true },
   departure_time: { type: String, required: true },
-  arrival_time: { type: String, required: true },
   available_seats: { type: Number, required: true },
   price: { type: Number, required: true },
 });

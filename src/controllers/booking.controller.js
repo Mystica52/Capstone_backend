@@ -59,7 +59,8 @@ export const initiatePaymentAndCompleteBooking = async (req, res) => {
     });
     await ticket.save();
 
-    res.status(200).json({ url: session.url });
+    res.status(200).json({ sessionId: session.id });
+    console.log('Stripe session:', session);
   } catch (error) {
     console.error("Error initiating payment and completing booking:", error);
     res.status(500).json({ message: "Internal Server Error" });
