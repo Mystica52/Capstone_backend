@@ -36,8 +36,8 @@ export const initiatePaymentAndCompleteBooking = async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `https://docs.stripe.com/testing`, // Change as per your client URL
-      cancel_url: `https://flutterwavedoc.readme.io/docs/test-cards`, // Change as per your client URL
+      success_url: `${process.env.BASE_URL}/api/success?busId=${busId}&userId=${userId}`, // Include ticket info in success URL
+      cancel_url: `${process.env.BASE_URL}/api/failure`,
       metadata: {
         busId,
         userId,
@@ -60,7 +60,7 @@ export const initiatePaymentAndCompleteBooking = async (req, res) => {
     await ticket.save();
 
     res.status(200).json({ sessionId: session.id });
-    console.log('Stripe session:', session);
+    console.log("Stripe session:", session);
   } catch (error) {
     console.error("Error initiating payment and completing booking:", error);
     res.status(500).json({ message: "Internal Server Error" });
