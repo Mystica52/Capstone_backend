@@ -40,7 +40,6 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email });
-    console.log(user);
     if (!user) {
       return res.status(401).json({
         Error: "Invalid email or password",
@@ -220,6 +219,34 @@ export const changePassword = async (req, res) => {
     return res.status(500).json({
       success: false,
       error: "Internal server error",
+    });
+  }
+};
+
+export const updateUserRole = async (req, res) => {
+  const { userId } = req.params;
+  const { role } = req.body;
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        Error: "User not found",
+      });
+    }
+    if (!["admin", "passenger", "agent"].includes(role)) {
+      return res.status(400).json({
+        Error: "Invalid role",
+      });
+    }
+    user.role = role;
+    await user.save();
+    return res.status(200).json({
+      message: "User role updated",
+    });
+  } catch (error) {
+    console.error("Error changing user role:", error);
+    return res.status(500).json({
+      Error: "Internal server error",
     });
   }
 };

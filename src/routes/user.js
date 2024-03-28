@@ -6,6 +6,7 @@ import {
   getUserById,
   login,
   signup,
+  updateUserRole,
 } from "../controllers/user.controller.js";
 import {
   signupValidationRules,
@@ -32,4 +33,5 @@ router.put(
   validate(passwordChangeValidationRules),
   changePassword
 );
+router.put("/assign-role/:userId", isAdmin, updateUserRole);
 export default router;
