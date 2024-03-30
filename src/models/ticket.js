@@ -1,14 +1,34 @@
 import mongoose from "mongoose";
 
-const ticketSChema = new mongoose.Schema({
+const ticketSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
   },
+  userName: {
+    type: String,
+    required: true,
+  },
+  userEmail: {
+    type: String,
+    required: true,
+  },
   bus: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Bus",
+    required: true,
+  },
+  busPlate: {
+    type: String,
+    required: true,
+  },
+  busDate: {
+    type: String,
+    required: true,
+  },
+  busTime: {
+    type: String,
     required: true,
   },
   price: {
@@ -21,5 +41,5 @@ const ticketSChema = new mongoose.Schema({
   },
 });
 
-const Ticket = mongoose.model("Ticket", ticketSChema);
+const Ticket = mongoose.model("Ticket", ticketSchema);
 export default Ticket;

@@ -16,25 +16,26 @@
         <!-- QR Code Container -->
         <div id="qrcode"></div>
     </div>
-
     <script>
-        // Example userId and ticketId
-        const userId = '123';
-        const ticketId = '456';
+        // Get the query parameters from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const ticketId = urlParams.get('ticketId');
 
-        // Concatenate userId and ticketId
-        const data = `User ID: ${userId}, Ticket ID: ${ticketId}`;
+        // Construct the ticket URL
+        const ticketUrl = `${window.location.origin}/api/ticket.html?ticketId=${ticketId}`;
 
-        // Create a new QRCode object
+        // Create a new QRCode object with the ticket URL
         const qrcode = new QRCode(document.getElementById("qrcode"), {
-            text: data,
-            width: 128,
-            height: 128,
+            text: ticketUrl,
+            width: 256, // Increase width for better readability
+            height: 256, // Increase height for better readability
             colorDark: "#000000",
             colorLight: "#ffffff",
             correctLevel: QRCode.CorrectLevel.H
         });
     </script>
+
+
 </body>
 
 </html>

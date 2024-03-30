@@ -1,6 +1,6 @@
 import bcrpyt from "bcrypt";
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
 import multer from "multer";
 import User from "../models/user.js";
 import { upload } from "../utils/upload.js";
