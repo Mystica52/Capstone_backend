@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+</head>
+
+<body class="bg-white">
+    <div class="flex flex-col justify-center items-center h-screen" style="background-color: #425C5A;">
+        <!-- Title -->
+        <h1 class="text-2xl font-bold mb-4 text-white">Ticket</h1>
+        <!-- QR Code Container -->
+        <div id="qrcode"></div>
+    </div>
+    <script>
+        // Get the query parameters from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const ticketId = urlParams.get('ticketId');
+
+        // Construct the ticket URL
+        const ticketUrl = `${window.location.origin}/api/ticket.html?ticketId=${ticketId}`;
+
+        // Create a new QRCode object with the ticket URL
+        const qrcode = new QRCode(document.getElementById("qrcode"), {
+            text: ticketUrl,
+            width: 256, // Increase width for better readability
+            height: 256, // Increase height for better readability
+            colorDark: "#000000",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    </script>
+
+
+</body>
+
+</html>
